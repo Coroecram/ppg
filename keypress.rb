@@ -93,6 +93,7 @@ module KeyPress
       clear_lines
       print header_string
       @strings_index += 1
+      print @strings[@strings_index]
     when "\e[C"
       @right_index += 1
       @right_index = -1 if @right_index > -1
