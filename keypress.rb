@@ -1,4 +1,5 @@
 require 'date'
+require 'byebug'
 
 module KeyPress
 
@@ -74,14 +75,14 @@ module KeyPress
       if @strings.length > 100
           @strings = @strings.drop(@strings.length - 100) # .shift?
       end
-      puts ""
+      puts
       @strings_index = -1
       return command
     when "\n"
       # puts "LINE FEED"
     when "\e"
       # puts "ESCAPE"
-    when "\e[A"
+    when "\e[A" #Up Arrow
       @right_index = -1
       return if @strings_index <= -(@strings.length)
       clear_lines
@@ -90,7 +91,7 @@ module KeyPress
       print header_string
       @strings_index -= 1
       print @current_string
-    when "\e[B"
+    when "\e[B" #Down Arrow
       @right_index = -1
       return if @strings_index == -1
       clear_lines
@@ -99,15 +100,14 @@ module KeyPress
       print header_string
       @strings_index += 1
       print @current_string
-    when "\e[C"
-      @right_index += 1
-      @right_index = -1 if @right_index > -1
+    when "\e[C" #Right arrow
+      @right_index += 1 if @right_index < -1
+      @right_index = -1
       print "\r"
       print header_string
       print @current_substring
-    when "\e[D"
-      @right_index -= 1
-      @right_index = -@current_string.length if @right_index > @current_string.length
+    when "\e[D" #Left Arrow
+      @right_index -= 1 unless @right_index <= -(@current_string.length)
       print "\r"
       print header_string
       print @current_substring
