@@ -9,6 +9,7 @@ class PPGThread
 
     def initialize(switch_time, navigator, driver, threads, pairing_manager)
         @switch_time       = switch_time
+        @switch_message    = new_switch_message
         @navigator         = driver
         @driver            = navigator
         @pairing_manager   = pairing_manager
@@ -27,6 +28,11 @@ class PPGThread
     def set_time(delta=nil)
         delta ||= @switch_time
         @next_switch_time = Time.now + (delta * 60)
+        @switch_message = new_switch_message
+    end
+
+    def new_switch_message
+      "\nIt has been #{@switch_time} minutes.  Please change the navigator with `ppg switch`".upcase
     end
 
     def run
@@ -35,17 +41,18 @@ class PPGThread
         puts "Enjoy Pair Programming Git"
         puts
         puts "EXTRA COMMANDS:"
+        puts
         puts "ppg switch"
         puts "    switches the navigator, and user of record"
-        puts "ppg modify -attribute -role new-value"
+        puts "ppg modify -attribute [-role] new-value"
         puts "     change email, name or repo attribute of a user"
         puts "     ppg modify -email -driver for@example.com"
-        puts "ppg set-time"
-        puts "     change switch timer"
+        puts "ppg set-countdown [minutes]"
+        puts "     sets countdown for [minutes]"
         puts "ppg pause"
-        puts "    pauses the timer"
+        puts "     pauses the timer"
         puts "ppg unpause"
-        puts "    unpauses the timer\n"
+        puts "     unpauses the timer"
         puts
         print header_string
         set_time
@@ -60,15 +67,14 @@ class PPGThread
                     process(string)
                     @responding = false
                     if @next_switch_time < Time.now
-                      switch_message = "\nIt has been #{@switch_time} minutes.  Please change the navigator with `ppg switch`".upcase
                         if @strings[@strings_index].length < 1
                             clear_lines
                             print " " * (`tput cols`.to_i)
                             clear_lines
-                            puts switch_message
+                            puts @switch_message
                             print header_string
                         else
-                            puts switch_message
+                            puts @switch_message
                             print header_string
                             print @strings[@strings_index]
                             clear_lines
@@ -104,10 +110,10 @@ class PPGThread
                 end
                 if Time.now - @last_commit_alert > 300
                     @last_commit_alert = Time.now
-                    last_commit - Time.now - @last_commit
+                    last_commit = Time.now - @last_commit
                     clear_lines
                     print "\n\r"
-                    print "\nIt has been #{last_commit/60} minutes consider committing\n".upcase
+                    print "\nIt has been #{last_commit/60} minutes since your last commit.\n".upcase
                     print "\r"
                     print header_string
                     print @strings[@strings_index]
