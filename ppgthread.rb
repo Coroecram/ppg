@@ -8,25 +8,25 @@ class PPGThread
   include KeyPress
 
     def initialize(switch_time, navigator, driver, threads, pairing_manager)
-        @switch_time     = switch_time
-        @navigator       = driver
-        @driver          = navigator
-        @pairing_manager = pairing_manager
-        switch_roles #switch_roles to run git config
-        @threads       = threads
-        @strings       = [""]
-        @strings_index = -1
-        @current_string = @strings[@strings_index]
-        set_time
-        @responding  = false
-        @last_commit = Time.now
+        @switch_time       = switch_time
+        @navigator         = driver
+        @driver            = navigator
+        @pairing_manager   = pairing_manager
+        @threads           = threads
+        @strings           = [""]
+        @strings_index     = -1
+        @current_string    = @strings[@strings_index]
+        @responding        = false
+        @last_commit       = Time.now
         @last_commit_alert = Time.now
-        @right_index = -1
-        @last_keypress = Time.now
+        @right_index       = -1
+        @last_keypress     = Time.now
+        set_time
+        switch_roles #switch_roles to run git config
     end
 
     def set_time(delta=nil)
-        delta = delta || @switch_time
+        delta ||= @switch_time
         @next_switch_time = Time.now + (delta * 60)
     end
 
@@ -58,16 +58,15 @@ class PPGThread
                     process(string)
                     @responding = false
                     if @next_switch_time < Time.now
+                      switch_message = "\nIt has been #{@switch_time} minutes.  Please change the navigator with `ppg switch`".upcase
                         if @current_string.length < 1
                             clear_lines
                             print " " * (`tput cols`.to_i)
                             clear_lines
-                            puts ""
-                            puts "It has been #{@switch_time} minutes.  Please change the navigator with ppg switch".upcase
+                            puts switch_message
                             print header_string
                         else
-                            puts ""
-                            puts "\nIt has been #{@switch_time} minutes.  Please change the navigator with ppg switch".upcase
+                            puts switch_message
                             print header_string
                             print @current_string
                             clear_lines
