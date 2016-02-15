@@ -2,7 +2,6 @@ require_relative 'keypress'
 require_relative 'custom_errors'
 require_relative 'user'
 require 'io/console'
-require 'byebug'
 require 'date'
 
 class PPGThread
@@ -45,6 +44,7 @@ class PPGThread
         puts "    pauses the timer"
         puts "ppg unpause"
         puts "    unpauses the timer\n"
+        puts
         print header_string
         set_time
         @threads << Thread.new do
@@ -186,9 +186,8 @@ class PPGThread
       else
         set_time
       end
-      debugger
-      `git config --local --replace-all user.name #{@navigator.name}`
-      `git config --local --replace-all user.email #{@navigator.email}`
+      `git config --local user.name #{@navigator.name}`
+      `git config --local user.email #{@navigator.email}`
     end
 
     def reset_time
