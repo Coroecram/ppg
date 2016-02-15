@@ -25,35 +25,13 @@ class PPGThread
         switch_roles #switch_roles to run git config
     end
 
-    def set_time(delta=nil)
-        delta ||= @switch_time
-        @next_switch_time = Time.now + (delta * 60)
-        @switch_message = new_switch_message
-    end
-
-    def new_switch_message
-      "\nIt has been #{@switch_time} minutes.  Please change the navigator with `ppg switch`".upcase
-    end
-
     def run
         puts
         puts
         puts "Enjoy Pair Programming Git"
         puts
         puts "EXTRA COMMANDS:"
-        puts
-        puts "ppg switch"
-        puts "    switches the navigator, and user of record"
-        puts "ppg modify -attribute [-role] new-value"
-        puts "     change email, name or repo attribute of a user"
-        puts "     ppg modify -email -driver for@example.com"
-        puts "ppg set-countdown [minutes]"
-        puts "     sets countdown for [minutes]"
-        puts "ppg pause"
-        puts "     pauses the timer"
-        puts "ppg unpause"
-        puts "     unpauses the timer"
-        puts
+        docs
         print header_string
         set_time
         @threads << Thread.new do
@@ -110,7 +88,7 @@ class PPGThread
                 end
                 if Time.now - @last_commit_alert > 300
                     @last_commit_alert = Time.now
-                    last_commit = Time.now - @last_commit
+                    last_commit = (Time.now - @last_commit).round
                     clear_lines
                     print "\n\r"
                     print "\nIt has been #{last_commit/60} minutes since your last commit.\n".upcase
@@ -131,16 +109,20 @@ class PPGThread
     def process(input)
         output = ""
         if input.strip.start_with?('ppg')
-            if input == 'ppg set-time'
-              reset_time
-            elsif input == 'ppg switch'
+            if input =~ /\Appg switch-timer.*\z/
+              reset_switch_timer(input)
+            elsif input =~ /\Appg countdown.*\z/
+              countdown_timer(input)
+            elsif input =~ /\Appg switch\z/
               switch_roles
-            elsif input.start_with?('ppg modify')
+            elsif input =~ /\Appg modify.*\z/
               modify_user(input)
-            elsif input == 'ppg pause'
+            elsif input =~ /\Appg pause\z/
               pause
-            elsif input == 'ppg unpause'
+            elsif input =~ /\Appg unpause\z/
               ppgunpause
+            elsif input =~ /\Appg (docs|help)\z/
+              docs
             else
                 string = "#{input.gsub('ppg', 'git')}"
                 puts(string)
@@ -197,15 +179,49 @@ class PPGThread
       `git config --local user.email #{@navigator.email}`
     end
 
-    def reset_time
-        puts "How long would you like this round to be?"
-        num = gets.to_i
+    def countdown_timer(input)
+      num = input.split.last
+      raise FormatError, "Please enter a minutes value" if !num.is_i?
+      num = num.to_i
+      raise OutofBoundsError, "Minutes must be between 1 and 20" if num < 1 || num > 20
 
-        if @paused
-            @paused = num * 60
-        else
-            set_time(num)
-         end
+      if @paused
+          @paused = num * 60
+      else
+          set_time(num)
+      end
+
+    rescue StandardError => e
+      puts e.message
+      puts
+    end
+
+    def reset_switch_timer(input)
+      num = input.split.last
+      raise FormatError, "Please enter a minutes value" if !num.is_i?
+      num = num.to_i
+      raise OutofBoundsError, "Minutes must be between 15 and 120" if num < 15 || num > 120
+
+      @switch_time = num
+      set_time
+
+    rescue StandardError => e
+      puts e.message
+      puts
+    end
+
+    def set_time(delta=nil)
+      delta ||= @switch_time
+      @next_switch_time = Time.now + (delta * 60)
+      reset_switch_message
+    end
+
+    def new_switch_message
+      "\nIt has been #{@switch_time} minutes.  Please change the navigator with `ppg switch`".upcase
+    end
+
+    def reset_switch_message
+      @switch_message = new_switch_message
     end
 
     def modify_user(input)
@@ -244,6 +260,25 @@ class PPGThread
         @last_commit = Time.now
         @last_commit_alert = Time.now
         return output
+    end
+
+    def docs
+      puts
+      puts "ppg switch"
+      puts "    switches the navigator, and user of record"
+      puts "ppg modify -attribute -role new-value"
+      puts "     change email, name or repo attribute of the navigator or driver"
+      puts "     ppg modify -email -driver for@example.com"
+      puts "ppg switch-timer minutes"
+      puts "    change switch timer for x minutes"
+      puts "ppg countdown x"
+      puts "     sets countdown for x minutes"
+      puts "ppg pause"
+      puts "     pauses the timer"
+      puts "ppg unpause"
+      puts "     unpauses the timer"
+      puts "ppg docs or ppg help"
+      puts "    loads this manual"
     end
 
 end

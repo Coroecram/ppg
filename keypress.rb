@@ -107,7 +107,6 @@ module KeyPress
       print @strings[@strings_index][0..@right_index]
     when "\e[D" #Left Arrow
       @right_index -= 1 unless @right_index < -(@strings[@strings_index].length)
-      debugger
       print "\r"
       print header_string
       print @strings[@strings_index][0..@right_index]
