@@ -2,6 +2,7 @@ require_relative 'keypress'
 require_relative 'custom_errors'
 require_relative 'user'
 require 'io/console'
+require 'byebug'
 require 'date'
 
 class PPGThread
@@ -19,6 +20,7 @@ class PPGThread
         set_time
         @responding  = false
         @last_commit = Time.now
+        @last_commit_alert = Time.now
         @right_index = -1
         @last_keypress = Time.now
     end
@@ -29,14 +31,8 @@ class PPGThread
     end
 
     def run
-        puts ""
-        puts ""
-        puts ""
-        puts ""
-        puts "Enjoy Pair Programming Git"
-        puts ""
-        puts "EXTRA COMMANDS:"
-        puts ""
+        puts "\n\n\nEnjoy Pair Programming Git\n"
+        puts "EXTRA COMMANDS:\n"
         puts "ppg switch"
         puts "    switches the navigator, and user of record"
         puts "ppg modify -attribute -role new-value"
@@ -47,8 +43,7 @@ class PPGThread
         puts "ppg pause"
         puts "    pauses the timer"
         puts "ppg unpause"
-        puts "    unpauses the timer"
-        puts ""
+        puts "    unpauses the timer\n"
         print header_string
         set_time
         @threads << Thread.new do
@@ -97,7 +92,6 @@ class PPGThread
                 end
                 if (@next_switch_time - Time.now).floor == 0
                     clear_lines
-                    puts ""
                     print "\nIt has been #{@switch_time} minutes.  Please change the navigator with ppg switch\n".upcase
                     clear_lines
                     print header_string
@@ -106,12 +100,12 @@ class PPGThread
                     print header_string
                     print @strings[@strings_index][0..@right_index]
                 end
-                if Time.now - @last_commit > 5 * 60 && !@commit_alerted
-                    @commit_alerted = true
+                if Time.now - @last_commit_alert > 300
+                    @last_commit_alert = Time.now
+                    last_commit - Time.now - @last_commit
                     clear_lines
-                    puts ""
-                    print "\r"
-                    print "\nIt has been 5 minutes consider committing\n".upcase
+                    print "\n\r"
+                    print "\nIt has been #{last_commit/60} minutes consider committing\n".upcase
                     print "\r"
                     print header_string
                     print @strings[@strings_index]
@@ -191,6 +185,7 @@ class PPGThread
       else
         set_time
       end
+      debugger
       `git config --local --replace-all user.name #{@navigator.name}`
       `git config --local --replace-all user.email #{@navigator.email}`
     end
@@ -240,7 +235,7 @@ class PPGThread
         puts string
         output = `#{string}`
         @last_commit = Time.now
-        @commit_alerted = false
+        @last_commit_alert = Time.now
         return output
     end
 
