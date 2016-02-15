@@ -6,19 +6,24 @@ module KeyPress
       return "" if self.class == PairProgrammingGitConsole
       pwd = `pwd`.chomp
       @git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+      next_switch_time = next_switch_time_calc
       if @paused
-        next_switch_time = "paused:#{@paused.floor}"
+        next_switch_time = "paused: #{next_switch_time}"
       else
-        timeleft = (@next_switch_time - Time.now).round
-        unless timeleft < 0
-          seconds_left = timeleft % 60
-          seconds_left = (seconds_left < 10 ? "0#{seconds_left}" : seconds_left)
-          next_switch_time = "#{timeleft / 60}:#{seconds_left}"
-        else
-          next_switch_time = "switch"
-        end
+
       end
       return "|-#{@navigator.name}:~#{pwd}(#{@git_branch}) #{next_switch_time} -|$ "
+  end
+
+  def next_switch_time_calc
+    timeleft = (@next_switch_time - Time.now).round
+    unless timeleft < 0
+      seconds_left = timeleft % 60
+      seconds_left = (seconds_left < 10 ? "0#{seconds_left}" : seconds_left)
+      "#{timeleft / 60}:#{seconds_left}"
+    else
+      "Time to Switch"
+    end
   end
 
   def read_char
@@ -57,7 +62,7 @@ module KeyPress
       print @current_string
       print "\r"
       print header_string
-      print @current_string[0..@right_index]
+      print @current_substring
     when "\t"
       # puts "T"
     when "\r"
@@ -99,13 +104,13 @@ module KeyPress
       @right_index = -1 if @right_index > -1
       print "\r"
       print header_string
-      print @current_string[0..@right_index]
+      print @current_substring
     when "\e[D"
       @right_index -= 1
       @right_index = -@current_string.length if @right_index > @current_string.length
       print "\r"
       print header_string
-      print @current_string[0..@right_index]
+      print @current_substring
     when "\177"
       print "\r"
       print " " * ((header_string + @current_string).length)
@@ -122,7 +127,7 @@ module KeyPress
       print @current_string
       clear_lines
       print header_string
-      print @current_string[0..@right_index]
+      print @current_substring
     when "\004"
       # puts "DELETE"
     when "\e[3~"
@@ -141,7 +146,7 @@ module KeyPress
       print @current_string
       clear_lines
       print header_string
-      print @current_string[0..@right_index]
+      print @current_substring
     end
   end
 
