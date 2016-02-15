@@ -102,12 +102,12 @@ module KeyPress
       print @strings[@strings_index]
     when "\e[C" #Right arrow
       @right_index += 1 if @right_index < -1
-      @right_index = -1
       print "\r"
       print header_string
       print @strings[@strings_index][0..@right_index]
     when "\e[D" #Left Arrow
-      @right_index -= 1 unless @right_index <= -(@strings[@strings_index].length)
+      @right_index -= 1 unless @right_index < -(@strings[@strings_index].length)
+      debugger
       print "\r"
       print header_string
       print @strings[@strings_index][0..@right_index]
