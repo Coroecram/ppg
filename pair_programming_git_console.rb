@@ -55,5 +55,3 @@ class String
        !!(self =~ /\A[-+]?[0-9]+\z/)
     end
 end
-
-PairProgrammingGitConsole.new
