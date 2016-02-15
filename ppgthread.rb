@@ -15,11 +15,12 @@ class PPGThread
         @threads           = threads
         @strings           = [""]
         @strings_index     = -1
+        @right_index       = -1
         @current_string    = @strings[@strings_index]
+        @current_substring = @current_string[0..@right_index]
         @responding        = false
         @last_commit       = Time.now
         @last_commit_alert = Time.now
-        @right_index       = -1
         @last_keypress     = Time.now
         set_time
         switch_roles #switch_roles to run git config
@@ -71,7 +72,7 @@ class PPGThread
                             print @current_string
                             clear_lines
                             print header_string
-                            print @current_string[0..@right_index]
+                            print @current_substring
                         end
                     end
                 end
@@ -88,7 +89,7 @@ class PPGThread
                     print @current_string
                     clear_lines
                     print header_string
-                    print @current_string[0..@right_index]
+                    print @current_substring
                 end
                 if (@next_switch_time - Time.now).floor == 0
                     clear_lines
@@ -98,7 +99,7 @@ class PPGThread
                     print @current_string
                     clear_lines
                     print header_string
-                    print @current_string[0..@right_index]
+                    print @current_substring
                 end
                 if Time.now - @last_commit_alert > 300
                     @last_commit_alert = Time.now
@@ -111,7 +112,7 @@ class PPGThread
                     print @current_string
                     clear_lines
                     print header_string
-                    print @current_string[0..@right_index]
+                    print @current_substring
                     sleep 10
                 end
                 sleep 1
