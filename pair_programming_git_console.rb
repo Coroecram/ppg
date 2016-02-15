@@ -19,6 +19,7 @@ class PairProgrammingGitConsole
     @navigator
     @driver
     git_init
+    git_save_setup
     intro_prompt
     create_remotes
     @threads       = []
@@ -30,6 +31,11 @@ class PairProgrammingGitConsole
 
   def git_init
     `git init` if !(File.directory?('.git'))
+  end
+
+  def git_save_setup
+    @sysname  = `git config --local user.name`[0...-1]
+    @sysemail = `git config --local user.email`[0...-1]
   end
 
   def create_remotes

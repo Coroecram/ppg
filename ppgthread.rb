@@ -30,8 +30,11 @@ class PPGThread
     end
 
     def run
-        puts "\n\n\nEnjoy Pair Programming Git\n"
-        puts "EXTRA COMMANDS:\n"
+        puts
+        puts
+        puts "Enjoy Pair Programming Git"
+        puts
+        puts "EXTRA COMMANDS:"
         puts "ppg switch"
         puts "    switches the navigator, and user of record"
         puts "ppg modify -attribute -role new-value"

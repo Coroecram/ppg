@@ -133,6 +133,7 @@ module KeyPress
     when "\e[3~"
       # puts "ALTERNATE DELETE"
     when "\u0003"
+      reset_git_config
       exit 0
     when /^.$/
       if @strings[@strings_index].length == 0 || @right_index == -1
@@ -162,5 +163,10 @@ module KeyPress
       key_press = handle_key_press
     end
     key_press
+  end
+
+  def reset_git_config
+    `git config --local user.name #{@sysname}`
+    `git config --local user.email #{@sysemail}`
   end
 end
