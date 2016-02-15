@@ -52,24 +52,24 @@ module KeyPress
     end
     case c
     when " "
-      if @current_string.length == 0 || @right_index == -1
-        @current_string  << " "
+      if @strings[@strings_index].length == 0 || @right_index == -1
+        @strings[@strings_index]  << " "
       else
         split_index = @right_index + 1
-        @current_string = @current_string[0...split_index] + " " + @current_string[split_index..-1]
+        @strings[@strings_index] = @strings[@strings_index][0...split_index] + " " + @strings[@strings_index][split_index..-1]
       end
       print "\r"
       print header_string
-      print @current_string
+      print @strings[@strings_index]
       print "\r"
       print header_string
-      print @current_substring
+      print @strings[@strings_index][0..@right_index]
     when "\t"
       # puts "T"
     when "\r"
       @right_index = -1
-      command = @current_string
-      if @current_string.length > 0 && @strings_index == -1
+      command = @strings[@strings_index]
+      if @strings[@strings_index].length > 0 && @strings_index == -1
           @strings << ""
       end
       if @strings.length > 100
@@ -86,48 +86,48 @@ module KeyPress
       @right_index = -1
       return if @strings_index <= -(@strings.length)
       clear_lines
-      print " " * (header_string.length + @current_string.length) + " "
+      print " " * (header_string.length + @strings[@strings_index].length) + " "
       clear_lines
       print header_string
       @strings_index -= 1
-      print @current_string
+      print @strings[@strings_index]
     when "\e[B" #Down Arrow
       @right_index = -1
       return if @strings_index == -1
       clear_lines
-      print " " * (header_string.length + @current_string.length) + " "
+      print " " * (header_string.length + @strings[@strings_index].length) + " "
       clear_lines
       print header_string
       @strings_index += 1
-      print @current_string
+      print @strings[@strings_index]
     when "\e[C" #Right arrow
       @right_index += 1 if @right_index < -1
       @right_index = -1
       print "\r"
       print header_string
-      print @current_substring
+      print @strings[@strings_index][0..@right_index]
     when "\e[D" #Left Arrow
-      @right_index -= 1 unless @right_index <= -(@current_string.length)
+      @right_index -= 1 unless @right_index <= -(@strings[@strings_index].length)
       print "\r"
       print header_string
-      print @current_substring
+      print @strings[@strings_index][0..@right_index]
     when "\177"
       print "\r"
-      print " " * ((header_string + @current_string).length)
+      print " " * ((header_string + @strings[@strings_index]).length)
       clear_lines
       print header_string
-      if @current_string.length == 0 || @right_index == -1
-        @current_string = @current_string[0..-2]
+      if @strings[@strings_index].length == 0 || @right_index == -1
+        @strings[@strings_index] = @strings[@strings_index][0..-2]
       else
         split_index = @right_index + 1
-        @current_string = @current_string[0...@right_index] + @current_string[split_index..-1]
+        @strings[@strings_index] = @strings[@strings_index][0...@right_index] + @strings[@strings_index][split_index..-1]
       end
       clear_lines
       print header_string
-      print @current_string
+      print @strings[@strings_index]
       clear_lines
       print header_string
-      print @current_substring
+      print @strings[@strings_index][0..@right_index]
     when "\004"
       # puts "DELETE"
     when "\e[3~"
@@ -135,23 +135,23 @@ module KeyPress
     when "\u0003"
       exit 0
     when /^.$/
-      if @current_string.length == 0 || @right_index == -1
-        @current_string  << c
+      if @strings[@strings_index].length == 0 || @right_index == -1
+        @strings[@strings_index]  << c
       else
         split_index = @right_index + 1
-        @current_string = @current_string[0...split_index] + c + @current_string[split_index..-1]
+        @strings[@strings_index] = @strings[@strings_index][0...split_index] + c + @strings[@strings_index][split_index..-1]
       end
       clear_lines
       print header_string
-      print @current_string
+      print @strings[@strings_index]
       clear_lines
       print header_string
-      print @current_substring
+      print @strings[@strings_index][0..@right_index]
     end
   end
 
   def clear_lines
-      print "\b" * ((header_string + @current_string).length)
+      print "\b" * ((header_string + @strings[@strings_index]).length)
       print "\r"
   end
 

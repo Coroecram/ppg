@@ -4,14 +4,12 @@ module Intro
     @strings           = [""]
     @strings_index     = -1
     @right_index       = -1
-    @current_string    = @strings[@strings_index]
-    @current_substring = @current_string[0..@right_index]
     @navigator         = new_user("navigator")
     @driver            = new_user("driver")
     @switch_timer      = switch_timer_prompt
   end
 
-  def new_user(role, identifier)
+  def new_user(role)
     name  = name_prompt(role)
     email = email_prompt(role)
     repo  = repo_prompt(role)
