@@ -165,7 +165,7 @@ module KeyPress
   end
 
   def reset_git_config
-    `git config --local user.name #{@sysname}`
-    `git config --local user.email #{@sysemail}`
+    `git config --local --replace-all user.name #{@sysname}`
+    `git config --local --replace-all user.email #{@sysemail}`
   end
 end
