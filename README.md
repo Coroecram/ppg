@@ -4,15 +4,15 @@ is a console wrapper that allows, as the name suggests, more efficient pair prog
 management.
 
 ### Usage
-As this product is in development, the implementation is clunky at the moment and forces you to
+As this product is in development, implementation is extraordinarily clunky and forces you to
 move all of the files of this repo into your project folder and then `ruby run.rb` from the
 command line. For a good demo, you can just do this command inside the cloned folder.
 
-Ideally, PPGC will become a command line gem, much like bundler, and you will just call
+Ideally, PPGC will become a command line gem, a là bundler, and you will just call
 `ppg start` from the command line in the directory of your pair programming project.
 
 ###Features
-PPGC has many functionalities (with more to come) to help pair-programmers.
+PPGC has many functionalities (with more to come) to help pair-programmers:
 
 - Switch timer with running clock on command line
 - Countdown timer
