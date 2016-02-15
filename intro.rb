@@ -1,12 +1,13 @@
 module Intro
 
   def intro_prompt
-    @strings       = [""]
-    @strings_index = -1
-    @right_index   = -1
-    @navigator     = new_user("navigator", 1)
-    @driver        = new_user("driver", 2)
-    @switch_timer  = switch_timer_prompt
+    @strings        = [""]
+    @strings_index  = -1
+    @current_string = @strings[@strings_index]
+    @right_index    = -1
+    @navigator      = new_user("navigator", 1)
+    @driver         = new_user("driver", 2)
+    @switch_timer   = switch_timer_prompt
   end
 
   def new_user(role, identifier)

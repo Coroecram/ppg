@@ -17,6 +17,7 @@ class PPGThread
         @threads       = threads
         @strings       = [""]
         @strings_index = -1
+        @current_string = @strings[@strings_index]
         set_time
         @responding  = false
         @last_commit = Time.now
@@ -57,7 +58,7 @@ class PPGThread
                     process(string)
                     @responding = false
                     if @next_switch_time < Time.now
-                        if @strings[@strings_index].length < 1
+                        if @current_string.length < 1
                             clear_lines
                             print " " * (`tput cols`.to_i)
                             clear_lines
@@ -68,10 +69,10 @@ class PPGThread
                             puts ""
                             puts "\nIt has been #{@switch_time} minutes.  Please change the navigator with ppg switch".upcase
                             print header_string
-                            print @strings[@strings_index]
+                            print @current_string
                             clear_lines
                             print header_string
-                            print @strings[@strings_index][0..@right_index]
+                            print @current_string[0..@right_index]
                         end
                     end
                 end
@@ -85,20 +86,20 @@ class PPGThread
                 if Time.now - @last_keypress > 5
                     clear_lines
                     print header_string
-                    print @strings[@strings_index]
+                    print @current_string
                     clear_lines
                     print header_string
-                    print @strings[@strings_index][0..@right_index]
+                    print @current_string[0..@right_index]
                 end
                 if (@next_switch_time - Time.now).floor == 0
                     clear_lines
                     print "\nIt has been #{@switch_time} minutes.  Please change the navigator with ppg switch\n".upcase
                     clear_lines
                     print header_string
-                    print @strings[@strings_index]
+                    print @current_string
                     clear_lines
                     print header_string
-                    print @strings[@strings_index][0..@right_index]
+                    print @current_string[0..@right_index]
                 end
                 if Time.now - @last_commit_alert > 300
                     @last_commit_alert = Time.now
@@ -108,10 +109,10 @@ class PPGThread
                     print "\nIt has been #{last_commit/60} minutes consider committing\n".upcase
                     print "\r"
                     print header_string
-                    print @strings[@strings_index]
+                    print @current_string
                     clear_lines
                     print header_string
-                    print @strings[@strings_index][0..@right_index]
+                    print @current_string[0..@right_index]
                     sleep 10
                 end
                 sleep 1
