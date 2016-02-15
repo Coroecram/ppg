@@ -29,5 +29,6 @@ helping the project.
 At the moment, the biggest help would be in writing tests
 which then can help everybody stay together on developing moving forward.
 Right now, the focus is to reorganize the project so that everything is only created once,
+(there is a keypress handler for the intro and then another for the threads)
 write a testbase to cover what has been created so far, and then get this project into
 a Ruby Gem that can be accessed from the command line.
