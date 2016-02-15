@@ -30,7 +30,7 @@ class PPGThread
         puts
         puts "Enjoy Pair Programming Git"
         puts
-        puts "EXTRA COMMANDS:"
+        puts "PPG Commands:"
         docs
         print header_string
         set_time
@@ -181,7 +181,7 @@ class PPGThread
 
     def countdown_timer(input)
       num = input.split.last
-      raise FormatError, "Please enter a minutes value" if !num.is_i?
+      raise FormatError, "Please enter a valid minutes value" if !num.is_i?
       num = num.to_i
       raise OutofBoundsError, "Minutes must be between 1 and 20" if num < 1 || num > 20
 
@@ -198,7 +198,7 @@ class PPGThread
 
     def reset_switch_timer(input)
       num = input.split.last
-      raise FormatError, "Please enter a minutes value" if !num.is_i?
+      raise FormatError, "Please enter a valid minutes value" if !num.is_i?
       num = num.to_i
       raise OutofBoundsError, "Minutes must be between 15 and 120" if num < 15 || num > 120
 
@@ -263,7 +263,6 @@ class PPGThread
     end
 
     def docs
-      puts
       puts "ppg switch"
       puts "    switches the navigator, and user of record"
       puts "ppg modify -attribute -role new-value"
